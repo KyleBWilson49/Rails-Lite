@@ -28,6 +28,7 @@ class ControllerBase
     res.status = 302
     @already_built_response = true
     res.finish
+    session.store_session(@res)
   end
 
   # Populate the response with content.
@@ -40,6 +41,7 @@ class ControllerBase
     res.write(content)
     @already_built_response = true
     res.finish
+    session.store_session(@res)
   end
 
   # use ERB and binding to evaluate templates
@@ -55,6 +57,7 @@ class ControllerBase
 
   # method exposing a `Session` object
   def session
+    @session ||= Session.new(@req)
   end
 
   # use this with the router to call action_name (:index, :show, :create...)
