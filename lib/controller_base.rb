@@ -1,5 +1,6 @@
 require 'active_support'
 require 'active_support/core_ext'
+require 'active_support/inflector'
 require 'erb'
 require_relative './session'
 
@@ -21,7 +22,8 @@ class ControllerBase
 
   # Set the response status code and header
   def redirect_to(url)
-    # res =Rack::Response.new
+    raise Exception if already_built_response?
+
     res['Location'] = url
     res.status = 302
     @already_built_response = true
@@ -32,8 +34,9 @@ class ControllerBase
   # Set the response's content type to the given type.
   # Raise an error if the developer tries to double render.
   def render_content(content, content_type)
-    # res = Rack::Response.new
-    res['Content_Type'] = content_type
+    raise Exception if already_built_response?
+
+    res['Content-Type'] = content_type
     res.write(content)
     @already_built_response = true
     res.finish
@@ -42,6 +45,12 @@ class ControllerBase
   # use ERB and binding to evaluate templates
   # pass the rendered html to render_content
   def render(template_name)
+    controller_name = self.class.to_s.underscore
+    view_content = File.read("views/#{controller_name}/#{template_name}.html.erb")
+
+    content = ERB.new(view_content).result(binding)
+
+    render_content(content, 'text/html')
   end
 
   # method exposing a `Session` object
