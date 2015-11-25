@@ -3,6 +3,7 @@ require 'active_support/core_ext'
 require 'active_support/inflector'
 require 'erb'
 require_relative './session'
+require_relative './flash'
 
 class ControllerBase
   attr_reader :req, :res, :params
@@ -28,7 +29,10 @@ class ControllerBase
     res.status = 302
     @already_built_response = true
     res.finish
+    
     session.store_session(@res)
+    # flash.flash_attributes.each_key { |key| flash[key][1] += 1 }
+    flash.store_flash(@res)
   end
 
   # Populate the response with content.
@@ -39,15 +43,20 @@ class ControllerBase
 
     res['Content-Type'] = content_type
     res.write(content)
+
     @already_built_response = true
     res.finish
     session.store_session(@res)
+
+    # flash.flash_attributes.each_key { |key| flash[key][1] += 1 }
+    flash.store_flash(@res)
   end
 
   # use ERB and binding to evaluate templates
   # pass the rendered html to render_content
   def render(template_name)
     controller_name = self.class.to_s.underscore
+
     view_content = File.read("views/#{controller_name}/#{template_name}.html.erb")
 
     content = ERB.new(view_content).result(binding)
@@ -58,6 +67,10 @@ class ControllerBase
   # method exposing a `Session` object
   def session
     @session ||= Session.new(@req)
+  end
+
+  def flash
+    @flash ||= Flash.new(@req)
   end
 
   # use this with the router to call action_name (:index, :show, :create...)

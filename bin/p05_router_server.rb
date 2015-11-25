@@ -26,13 +26,20 @@ end
 
 class Cats2Controller < ControllerBase
   def index
-    render_content($cats.to_s, "text/html")
+    @cats = "Gizmo"
+    render :index
+  end
+
+  def new
+    flash[:error] = "HELP!!"
+    render :new
   end
 end
 
 router = Router.new
 router.draw do
   get Regexp.new("^/cats$"), Cats2Controller, :index
+  get Regexp.new("^/cats/new$"), Cats2Controller, :new
   get Regexp.new("^/cats/(?<cat_id>\\d+)/statuses$"), StatusesController, :index
 end
 

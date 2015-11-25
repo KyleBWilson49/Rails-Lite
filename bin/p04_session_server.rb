@@ -5,6 +5,8 @@ class MyController < ControllerBase
   def go
     session["count"] ||= 0
     session["count"] += 1
+
+    flash[:error] = "help!"    
     render :counting_show
   end
 end
