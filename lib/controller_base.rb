@@ -12,7 +12,7 @@ class ControllerBase
     @already_built_response = false
     @req = req
     @res = res
-    @route_params = route_params
+    @params = route_params.merge(req.params)
   end
 
   # Helper method to alias @already_built_response
@@ -62,5 +62,6 @@ class ControllerBase
 
   # use this with the router to call action_name (:index, :show, :create...)
   def invoke_action(name)
+    self.send name
   end
 end

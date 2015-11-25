@@ -20,13 +20,13 @@ class StatusesController < ControllerBase
       s[:cat_id] == Integer(params['cat_id'])
     end
 
-    render_content(statuses.to_s, "text/text")
+    render_content(statuses.to_s, "text/html")
   end
 end
 
 class Cats2Controller < ControllerBase
   def index
-    render_content($cats.to_s, "text/text")
+    render_content($cats.to_s, "text/html")
   end
 end
 
@@ -44,6 +44,6 @@ app = Proc.new do |env|
 end
 
 Rack::Server.start(
- app: app, 
+ app: app,
  Port: 3000
 )
