@@ -2,6 +2,7 @@ require 'rack'
 require_relative '../lib/controller_base'
 require_relative '../lib/router'
 require_relative '../lib/flash'
+require_relative 'exceptions_middleware'
 
 class Dog
   attr_reader :name, :owner
@@ -75,12 +76,17 @@ router.draw do
   post Regexp.new("^/dogs$"), DogsController, :create
 end
 
-app = Proc.new do |env|
+flash_app = Proc.new do |env|
   req = Rack::Request.new(env)
   res = Rack::Response.new
   router.run(req, res)
   res.finish
 end
+
+app = Rack::Builder.new do
+  use ExceptionsMiddleware
+  run flash_app
+end.to_app
 
 Rack::Server.start(
  app: app,

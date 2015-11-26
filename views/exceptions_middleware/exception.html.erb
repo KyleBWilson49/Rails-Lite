@@ -1,0 +1,36 @@
+<p>
+  there was an error
+</p>
+<p>
+  Message:
+  <%= e.message %>
+</p>
+<ul>
+  Backtrace:
+  <% e.backtrace_locations.each do |backtrace| %>
+    <li><%= backtrace %></li>
+  <% end %>
+</ul>
+
+<br>
+
+<% error_line = e.backtrace_locations.first.to_s.split(':') %>
+<% file_name = error_line[0].to_s %>
+<% line_number = error_line[1].to_i %>
+
+<% file = File.readlines(file_name) %>
+<% read_line_numbers = ((line_number - 10)..(line_number + 10)) %>
+<% read_line_numbers.each do |number| %>
+  <%= number %><%= file[number] %><%= "<<<<<<<<<Problem" if number == line_number %><br>
+<% end %>
+
+
+
+
+
+
+
+<p>
+  cause:
+  <%= e.cause %>
+</p>
