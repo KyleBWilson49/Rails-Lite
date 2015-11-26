@@ -20,9 +20,17 @@
 
 <% file = File.readlines(file_name) %>
 <% read_line_numbers = ((line_number - 10)..(line_number + 10)) %>
+
+<% print_out = "" %>
+
 <% read_line_numbers.each do |number| %>
-  <%= number %><%= file[number] %><%= "<<<<<<<<<Problem" if number == line_number %><br>
+  <% next if file[number].nil? %>
+ <% print_out << "#{number} #{file[number]}" %>
 <% end %>
+
+<pre><%= print_out %></pre>
+
+
 
 
 
