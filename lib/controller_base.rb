@@ -28,10 +28,8 @@ class ControllerBase
     res['Location'] = url
     res.status = 302
     @already_built_response = true
-    res.finish
-    
+
     session.store_session(@res)
-    # flash.flash_attributes.each_key { |key| flash[key][1] += 1 }
     flash.store_flash(@res)
   end
 
@@ -45,10 +43,8 @@ class ControllerBase
     res.write(content)
 
     @already_built_response = true
-    res.finish
-    session.store_session(@res)
 
-    # flash.flash_attributes.each_key { |key| flash[key][1] += 1 }
+    session.store_session(@res)
     flash.store_flash(@res)
   end
 

@@ -1,26 +1,31 @@
 require 'json'
+require 'byebug'
 
 class Flash
-  attr_accessor :flash_attributes
-
   def initialize(req)
-    if flash
-      @flash_attributes = JSON.parse(req.cookies['_flash'])
+    if req.cookies.nil? || req.cookies["_flash"] == {} || req.cookies["_flash"] == "null"
+      @flash_new = {}
+      @flash_past = {}
     else
-      @flash_attributes = {}
+      @flash_past = JSON.parse(req.cookies["_flash"])
+      @flash_new = {}
     end
   end
 
   def [](key)
-    @flash_attributes[key]
+      hash = @flash_new.merge(@flash_past)
+      hash[key]
+  end
+
+  def now
+    @flash_past
   end
 
   def []=(key, val)
-    @flash_attributes[key] = val
+    @flash_new[key] = val
   end
 
   def store_flash(res)
-    @flash_attributes[:path] = "/"
-    res.set_cookie('_flash', @flash_attributes.to_json)
+    res.set_cookie('_flash', {path: "/", value: @flash_new.to_json})
   end
 end
